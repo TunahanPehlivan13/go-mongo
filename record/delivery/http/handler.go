@@ -40,22 +40,25 @@ func (handler *Handler) Post(ctx *gin.Context) {
 		ctx.AbortWithStatus(http.StatusBadRequest)
 		return
 	}
-
 	records, err := handler.useCase.GetRecords(ctx.Request.Context(), inp.StartDate, inp.EndDate, inp.MinCount, inp.MaxCount)
 
-	if err != nil {
-		log.Printf("Error occured while getting records with msg -> (%s)", err)
-		ctx.JSON(http.StatusBadRequest, &getResponse{
-			Code:    1,
-			Msg:     err.Error(),
-			Records: toRecords(records),
-		})
+	if len(records) == 0 {
+		writeResponse(ctx, records, http.StatusNotFound, "not found")
 		return
 	}
 
-	ctx.JSON(http.StatusOK, &getResponse{
-		Code:    0,
-		Msg:     "Success",
+	if err != nil {
+		log.Printf("Error occured while getting records with msg -> (%s)", err)
+		writeResponse(ctx, records, http.StatusBadRequest, err.Error())
+		return
+	}
+	writeResponse(ctx, records, http.StatusOK, "Success")
+}
+
+func writeResponse(ctx *gin.Context, records []*models.Record, status int, msg string) {
+	ctx.JSON(status, &getResponse{
+		Code:    1,
+		Msg:     msg,
 		Records: toRecords(records),
 	})
 }
