@@ -42,17 +42,16 @@ func (handler *Handler) Post(ctx *gin.Context) {
 	}
 	records, err := handler.useCase.GetRecords(ctx.Request.Context(), inp.StartDate, inp.EndDate, inp.MinCount, inp.MaxCount)
 
-	if len(records) == 0 {
-		writeResponse(ctx, records, http.StatusNotFound, "not found", 1)
-		return
-	}
-
 	if err != nil {
 		log.Printf("Error occured while getting records with msg -> (%s)", err)
 		writeResponse(ctx, records, http.StatusBadRequest, err.Error(), 1)
 		return
 	}
-	writeResponse(ctx, records, http.StatusOK, "Success", 0)
+	if len(records) == 0 {
+		writeResponse(ctx, records, http.StatusNotFound, "not found", 1)
+		return
+	}
+	writeResponse(ctx, records, http.StatusOK, "success", 0)
 }
 
 func writeResponse(ctx *gin.Context, records []*models.Record, status int, msg string, code int) {
