@@ -2,11 +2,16 @@ package server
 
 import (
 	"context"
+	"github.com/TunahanPehlivan13/go-mongo/item"
+	itemHttp "github.com/TunahanPehlivan13/go-mongo/item/delivery/http"
+	"github.com/TunahanPehlivan13/go-mongo/item/repository/memdb"
+	itemUseCase "github.com/TunahanPehlivan13/go-mongo/item/usecase"
 	"github.com/TunahanPehlivan13/go-mongo/record"
 	recordHttp "github.com/TunahanPehlivan13/go-mongo/record/delivery/http"
 	recordRepo "github.com/TunahanPehlivan13/go-mongo/record/repository/mongo"
-	"github.com/TunahanPehlivan13/go-mongo/record/usecase"
+	recordUseCase "github.com/TunahanPehlivan13/go-mongo/record/usecase"
 	"github.com/gin-gonic/gin"
+	nedscode "github.com/nedscode/memdb"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"log"
@@ -20,15 +25,21 @@ type App struct {
 	httpServer *http.Server
 
 	recordUseCase record.UseCase
+	itemUseCase   item.UseCase
 }
 
 func NewApp() *App {
-	database := initMongoDB()
+	db := initMongoDB()
+	recordRepo := recordRepo.NewRecordRepository(db, "records")
 
-	recordRepo := recordRepo.NewRecordRepository(database, "records")
+	mdb := nedscode.NewStore().
+		PrimaryKey("key")
+
+	itemRepo := memdb.NewItemRepository(mdb)
 
 	return &App{
-		recordUseCase: usecase.NewRecordUseCase(recordRepo),
+		recordUseCase: recordUseCase.NewRecordUseCase(recordRepo),
+		itemUseCase:   itemUseCase.NewItemUseCase(itemRepo),
 	}
 }
 
@@ -40,6 +51,7 @@ func (app *App) Run(port string) error {
 	)
 
 	recordHttp.RegisterHTTPEndpoints(router, app.recordUseCase)
+	itemHttp.RegisterHTTPEndpoints(router, app.itemUseCase)
 
 	app.httpServer = &http.Server{
 		Addr:           ":" + port,

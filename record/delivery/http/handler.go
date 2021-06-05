@@ -4,7 +4,6 @@ import (
 	"github.com/TunahanPehlivan13/go-mongo/models"
 	"github.com/TunahanPehlivan13/go-mongo/record"
 
-	//"github.com/TunahanPehlivan13/go-mongo/record"
 	"github.com/gin-gonic/gin"
 	"log"
 	"net/http"
@@ -48,7 +47,7 @@ func (handler *Handler) Post(ctx *gin.Context) {
 		return
 	}
 	if len(records) == 0 {
-		writeResponse(ctx, records, http.StatusNotFound, "not found", 1)
+		writeResponse(ctx, records, http.StatusNotFound, record.ErrRecordNotFound.Error(), 1)
 		return
 	}
 	writeResponse(ctx, records, http.StatusOK, "success", 0)
@@ -74,7 +73,6 @@ func toRecords(records []*models.Record) []*Record {
 	for i, r := range records {
 		out[i] = toRecord(r)
 	}
-
 	return out
 }
 
