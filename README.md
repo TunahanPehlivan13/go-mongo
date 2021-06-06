@@ -1,6 +1,6 @@
 # go-mongo
 
-You can find out setup instructions via `Makefile`
+You can find out the setup instructions in `Makefile`
 
 All published **URLs** ->
 

@@ -13,7 +13,7 @@ import (
 type Record struct {
 	Key        string    `json:"key"`
 	CreatedAt  time.Time `json:"createdAt"`
-	TotalCount []int     `json:"totalCount"`
+	TotalCount int       `json:"totalCount"`
 }
 
 type Handler struct {
@@ -39,7 +39,8 @@ func (handler *Handler) Post(ctx *gin.Context) {
 		ctx.AbortWithStatus(http.StatusBadRequest)
 		return
 	}
-	records, err := handler.useCase.GetRecords(ctx.Request.Context(), inp.StartDate, inp.EndDate, inp.MinCount, inp.MaxCount)
+	records, err := handler.useCase.GetRecords(ctx.Request.Context(),
+		inp.StartDate, inp.EndDate, inp.MinCount, inp.MaxCount)
 
 	if err != nil {
 		log.Printf("Error occured while getting records with msg -> (%s)", err)
