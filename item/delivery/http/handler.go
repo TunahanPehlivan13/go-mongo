@@ -2,6 +2,7 @@ package http
 
 import (
 	"github.com/TunahanPehlivan13/go-mongo/item"
+	"github.com/TunahanPehlivan13/go-mongo/models"
 	"github.com/gin-gonic/gin"
 	"log"
 	"net/http"
@@ -48,5 +49,12 @@ func (handler *Handler) Get(ctx *gin.Context) {
 		ctx.AbortWithStatus(http.StatusNotFound)
 		return
 	}
-	ctx.JSON(http.StatusOK, item)
+	ctx.JSON(http.StatusOK, toItem(item))
+}
+
+func toItem(item *models.Item) *Item {
+	return &Item{
+		Key:   item.Key,
+		Value: item.Value,
+	}
 }
