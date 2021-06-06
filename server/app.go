@@ -12,6 +12,7 @@ import (
 	recordUseCase "github.com/TunahanPehlivan13/go-mongo/record/usecase"
 	"github.com/gin-gonic/gin"
 	nedscode "github.com/nedscode/memdb"
+	"github.com/spf13/viper"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"log"
@@ -30,7 +31,7 @@ type App struct {
 
 func NewApp() *App {
 	db := initMongoDB()
-	recordRepo := recordRepo.NewRecordRepository(db, "records")
+	recordRepo := recordRepo.NewRecordRepository(db, viper.GetString("mongo.record_collection"))
 
 	mdb := nedscode.NewStore().
 		PrimaryKey("key")
@@ -79,14 +80,14 @@ func (app *App) Run(port string) error {
 }
 
 func initMongoDB() *mongo.Database {
-	clientOptions := options.Client().ApplyURI("mongodb+srv://challenge-xzwqd.mongodb.net/?retryWrites=true").
+	clientOptions := options.Client().ApplyURI(viper.GetString("mongo.uri")).
 		SetAuth(options.Credential{
-			Username: "challengeUser", Password: "WUMglwNBaydH8Yvu",
+			Username: viper.GetString("mongo.username"), Password: viper.GetString("mongo.pass"),
 		})
 
 	client, err := mongo.NewClient(clientOptions)
 	if err != nil {
-		log.Fatalf("Error occured while establishing connection to mongoDB")
+		log.Fatalf("Error occured while establishing connection to mongo msg -> (%s)", err)
 	}
 
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
@@ -102,5 +103,5 @@ func initMongoDB() *mongo.Database {
 		log.Fatal(err)
 	}
 
-	return client.Database("getir-case-study")
+	return client.Database(viper.GetString("mongo.dbname"))
 }

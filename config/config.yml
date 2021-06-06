@@ -1,0 +1,9 @@
+app:
+  port: 5000
+
+mongo:
+  uri: "mongodb+srv://challenge-xzwqd.mongodb.net/?retryWrites=true"
+  username: "challengeUser"
+  pass: "WUMglwNBaydH8Yvu"
+  dbname: "getir-case-study"
+  record_collection: "records"
