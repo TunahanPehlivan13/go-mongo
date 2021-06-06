@@ -16,7 +16,7 @@ func (itemUseCaseMock ItemUseCaseMock) Get(key string) (*models.Item, error) {
 	if !ok {
 		return nil, args.Error(1)
 	}
-	return item, nil
+	return item, args.Error(1)
 }
 
 func (itemUseCaseMock ItemUseCaseMock) Persist(key string, value string) error {

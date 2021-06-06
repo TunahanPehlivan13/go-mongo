@@ -17,6 +17,7 @@ func NewRecordUseCase(recordRepo record.Repository) *RecordUseCase {
 	}
 }
 
-func (recordUseCase RecordUseCase) GetRecords(ctx context.Context, startDate time.Time, endDate time.Time, minCount int, maxCount int) ([]*models.Record, error) {
+func (recordUseCase RecordUseCase) GetRecords(ctx context.Context,
+	startDate time.Time, endDate time.Time, minCount int, maxCount int) ([]*models.Record, error) {
 	return recordUseCase.recordRepo.GetRecords(ctx, startDate, endDate, minCount, maxCount)
 }
